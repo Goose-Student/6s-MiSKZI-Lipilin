@@ -1,54 +1,48 @@
 #include <iostream>
 #include <bitset>
-#include <fstream>
 #include <vector>
 #include <cmath>
-#include <map>
 #include "common.cpp"
-#include <algorithm>
 
 using namespace std;
 
-int main(){
+int main()
+{
     // Определение параметров
     int temp;
-    cout << "Enter first seed: ";
+    cout << "Enter the first seed: ";
     cin >> temp;
-    bitset<17> polinom1(temp); 
+    bitset<17> polinom1(temp);
+
+    cout << "Enter the second seed: ";
+    cin >> temp;
+    bitset<111> polinom2(temp);
+    cout << "\n# -------- Sampling -------- #:\n";
+    // Определение объема выборки
     
-    cout << "Enter second seed: ";
-    cin >> temp;
-    bitset<111> polinom2(temp); 
+    for (int i : vector<int>{1, 3, 6})
+    {
+        auto state = sampling(polinom1, polinom2, pow(10, i));
+        cout << "10^" << i << ", 0x1: " << state.first << ", 0x0: " << state.second << endl;
+    };
+    cout << "\n# ------ Probability ------- #:\n";
 
-    // cout << "Enter len: ";
-    // cin >> temp;
+    // Определение вероятностей появления от 1 до 4 бит
+    auto seq = genSequence(polinom1, polinom2, pow(10, 6));
+    for (int i = 1; i <= 4; i++)
+    {
+        auto patterns = genPatterns(i);
+        for (auto bits : patterns)
+        {
+            printIter(bits);
+            cout << ": " << probability(seq, bits) << "\n";
+        }; cout << endl;
+    };
+    cout << "\n# ------ Correlation ------- #:\n";
 
-    vector<bool> seq; // Объявление вектора перед циклом
-
-    // Оперделение обьема выборки
-    for(int i : vector<int> {1, 3, 6}) {
-        seq = sequence(polinom1, polinom2, pow(10, i));
-        cout << 10 << "^" << i << ": " << count(seq.begin(), seq.end(), true) / pow(10, i) << endl;
-    }; cout << endl;
-
-    // Определение появления вероятности
-    int len = pow(10, 5);
-    seq = sequence(polinom1, polinom2, len);
-    map<string, int> counts;
-    for(int bits = 1; bits <= 4; bits++){
-        for(int i = 0; i <= seq.size() - bits; i++){
-            string combination;
-            for(int j = 0; j < bits; j++){
-                combination += seq[i + j] ? '1' : '0';
-            }
-            counts[combination]++;
-        }
-    }
-
-    for(auto &pair : counts){
-        std::cout << "combination: " << pair.first << ", Probability: " << 
-        (double)pair.second / (seq.size() - pair.first.size() + 1) << std::endl;
-    }cout << endl;
+    // Определение корреляции
+    for (int i = 0; i <= 32; i++)
+        cout << "t = " << i << ", " << correlation(seq, i) << endl;
 
     system("pause");
     return 0;
