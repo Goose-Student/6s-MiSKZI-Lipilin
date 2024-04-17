@@ -167,7 +167,6 @@ void mask(string &inpath, string &outpath, prsGen &generator, int invertEveryNth
     outFile.close();
 }
 
-
 template <typename T>
 void printIter(const T &iterable)
 {
