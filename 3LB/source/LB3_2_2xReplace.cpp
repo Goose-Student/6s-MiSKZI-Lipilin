@@ -13,11 +13,11 @@ vector<unsigned char> substitution(vector<unsigned char> a)
     for (unsigned char bits : a)
     {
         // Извлечение бит
-        char juniorBits = (bits & 0xF0) >> 4;
-        char elderBits = bits & 0x0F;
+        char juniorBits = bits & 0x0F;
+        char elderBits = (bits & 0xF0) >> 4;
 
         // Склеиваем биты
-        unsigned char joinBits = (S[juniorBits] << 4) | S[elderBits];
+        unsigned char joinBits = (S[elderBits] << 4) | S[juniorBits];
         replaced.push_back(joinBits);
     }
     return replaced;
