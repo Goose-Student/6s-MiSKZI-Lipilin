@@ -1,22 +1,23 @@
 #include <iostream>
-#include <bitset>
 #include <fstream>
+#include <bitset>
 #include <vector>
 #include <numeric>
 
 using namespace std;
 
 // Генераторы 
-bool genBit(bitset<17> &polinom1, bitset<111> &polinom2)
+bool genBit(unsigned int &seed1, unsigned int &seed2,
+            )
 {
-    bool sum1 = polinom1[13] ^ polinom1[16];
-    bool sum2 = polinom2[100] ^ polinom2[110];
+    bool sum1 = ((polinom1 >> 13) & 1) ^ ((polinom1 >> 16) & 1);
+    bool sum2 = ((polinom2 >> 100) & 1) ^ ((polinom1 >> 110) & 1);
     bool res = sum1 ^ sum2;
 
     polinom1 <<= 1; // Сдвиг влево на 1 позицию
-    polinom1[0] = sum1;
+    polinom1 |= (sum1 << 0); // Устанавливаем 0-й бит
     polinom2 <<= 1; // Сдвиг влево на 1 позицию
-    polinom2[0] = sum2;
+    polinom2 |= (sum2 << 0); // Устанавливаем 0-й бит
 
     return res;
 }
@@ -88,6 +89,25 @@ double correlation(vector<bool> &sequence, int &t)
                              shift_seq.begin(), 0, plus<>(), equal_to<>());
     double B = sequence.size() - A;
     return (A - B) / (A + B);
+}
+
+double ascii(string &path, int &number){
+    char temp_symbol;
+    double counter = 0;
+    int size = 0;
+    ifstream file(path, ios::binary);
+    while (file.get(temp_symbol)){
+        unsigned char symbol = temp_symbol;
+        if (int(symbol) == number) counter++;
+        size++;
+    }; file.close();
+    return counter / size;
+        
+}
+
+void mask(string &inpath, string &outpath, 
+bitset<17> polinom1, bitset<111> polinom2){
+
 }
 
 template <typename T>
