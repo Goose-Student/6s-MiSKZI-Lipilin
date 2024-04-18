@@ -39,5 +39,6 @@ int main()
         output << bits;
     }
 
+    system("pause");
     return 0;
 }
