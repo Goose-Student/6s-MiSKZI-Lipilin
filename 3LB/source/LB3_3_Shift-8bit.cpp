@@ -1,6 +1,5 @@
-#include <vector>
-#include <iostream>
-#include "./common/common.cpp"
+#include "./common/generator.cpp"
+#include "./common/io.cpp"
 
 using namespace std;
 
@@ -21,16 +20,15 @@ vector<uint8_t> shift(vector<uint8_t> &bytes)
 }
 
 int main()
-{
-    // Вывод ветора a
-    printVector(a);
+{   
+    cout << "A: ";
+    printBytes(a, Types::HEX);
     cout << endl;
 
-    // Сдвиг 
-    vector<unsigned char> shifted = shift(a);
+    vector<uint8_t> replaced = shift(a);
 
-    // Вывод ветора shifted
-    printVector(shifted);
+    cout << "R: ";
+    printBytes(replaced, Types::HEX);
     cout << endl;
 
     system("pause");
