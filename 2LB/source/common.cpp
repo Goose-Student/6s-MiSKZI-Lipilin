@@ -151,13 +151,10 @@ void mask(string &inpath, string &outpath, prsGen &generator, int invertEveryNth
         {
             // Если invertEveryNth > 0 и текущий бит является n-м битом, инвертируем его
             if (invertEveryNth > 0 && bitCount % invertEveryNth == 0)
-            {
                 buffer ^= 1 << i;
-            }
 
             bool bit = generator.getBit();
             buffer ^= (-bit ^ buffer) & (1 << i);
-
             bitCount++;
         }
         outFile.put(buffer);

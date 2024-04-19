@@ -32,14 +32,13 @@ int main()
     ifstream input("input.txt", ios::binary);
     ofstream output("output.txt", ios::binary);
 
-    vector<unsigned char> a((istreambuf_iterator<char>(input)), istreambuf_iterator<char>());
+    vector<unsigned char> a((istreambuf_iterator<char>(input)),
+                            istreambuf_iterator<char>());
 
     vector<unsigned char> encrypted = encrypt(a);
 
     for (unsigned char bits : encrypted)
-    {
         output << bits;
-    }
 
     system("pause");
     return 0;

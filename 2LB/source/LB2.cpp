@@ -17,7 +17,7 @@ int main()
     cin >> second_seed;
 
     prsGen generator(first_seed, second_seed);
-    auto sequence = generator.sequence(pow(10, 6));
+    auto sequence = generator.sequence(pow(10, 4));
 
     // * Определение объема выборки
     cout << "\n# -------- Sampling -------- #:\n";

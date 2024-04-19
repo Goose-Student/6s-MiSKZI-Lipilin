@@ -1,18 +1,20 @@
 #include <vector>
 #include <iostream>
+#include "./common/common.cpp"
 
 using namespace std;
 
-vector<unsigned char> a = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+vector<uint8_t> a = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
 int p = 4;
 
-vector<unsigned char> shift(vector<unsigned char> &sequence)
+// Функция сдвига
+vector<uint8_t> shift(vector<uint8_t> &bytes)
 {
-    vector<unsigned char> shifted;
-    for (unsigned char bits : sequence)
+    vector<uint8_t> shifted;
+    for (uint8_t byte : bytes)
     {
-        unsigned char juniorBits = bits >> p;
-        unsigned char elderBits = bits << (8 - p);
+        uint8_t juniorBits = byte >> p;
+        uint8_t elderBits = byte << (8 - p);
         shifted.push_back(juniorBits | elderBits);
     }
     return shifted;
@@ -20,29 +22,16 @@ vector<unsigned char> shift(vector<unsigned char> &sequence)
 
 int main()
 {
-
-    for (unsigned char bits : a)
-    {
-        for (int i = 7; i >= 0; i--)
-        {
-            cout << ((bits >> i) & 0x01);
-            if (i % 4 == 0)
-                cout << ' ';
-        };
-    }
+    // Вывод ветора a
+    printVector(a);
     cout << endl;
 
+    // Сдвиг 
     vector<unsigned char> shifted = shift(a);
 
-    for (unsigned char bits : shifted)
-    {
-        for (int i = 7; i >= 0; i--)
-        {
-            cout << ((bits >> i) & 0x01);
-            if (i % 4 == 0)
-                cout << ' ';
-        }
-    }
+    // Вывод ветора shifted
+    printVector(shifted);
+    cout << endl;
 
     system("pause");
     return 0;

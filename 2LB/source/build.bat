@@ -1,0 +1,1 @@
+g++ LB2.cpp -o LB2.exe
