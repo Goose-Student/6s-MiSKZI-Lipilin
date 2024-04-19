@@ -32,7 +32,7 @@ vector<uint8_t> substitution(vector<uint8_t> &bytes)
 }
 
 int main()
-{   
+{
     cout << "A: ";
     printBytes(a, Types::HEX);
     cout << endl;
