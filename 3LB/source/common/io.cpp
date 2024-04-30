@@ -62,9 +62,15 @@ void printBytes(T value, const Type &type = Types::DEC)
 
 template <typename T>
 void printBytes(vector<T> values, const Type &type = Types::DEC)
-{
-    for (const T &value : values)
+{   
+    int count = 0;
+    for (const T &value : values){
         printBytes(value, type);
+        count += 1;
+        if (count % 16 == 0)
+            cout << endl;
+    }
+        
 }
 
 // Функции записи

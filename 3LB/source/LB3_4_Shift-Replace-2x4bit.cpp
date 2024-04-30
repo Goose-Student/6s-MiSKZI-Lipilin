@@ -44,7 +44,7 @@ int main()
     cout << "R: ";
     printBytes(encrypted, Types::HEX);
     cout << endl;
-
+    
     system("pause");
     return 0;
 }
