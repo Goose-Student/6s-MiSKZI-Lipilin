@@ -20,7 +20,7 @@ private:
     vector<uint8_t> bytes;
 
 public:
-    RoundKey(string path)
+    RoundKey(const string &path)
     {
         bytes = readBytes(path);
         if (bytes.size() != 7)
@@ -34,7 +34,7 @@ public:
 
         if (index > 23)
             index = 31 - index;
-            
+
         uint32_t nkey = 0;
         for (int i = 0; i < 4; i++)
             nkey |= (bytes[(index * 4 + i) % 7] << (3 - i) * 8);
@@ -44,20 +44,43 @@ public:
 
 int main()
 {
-    vector<uint8_t> key = readBytes("key.key");
-    printBytes(key, Types::HEX);
+    vector<uint8_t> data8 = readBytes("input.txt");
+    while (data8.size() % 64 != 0)
+        data8.push_back(0x00);
 
-    cout << endl;
-
-    RoundKey round_key("key.key");
-    for (int i = 0; i < 32; i++)
+    vector<vector<uint32_t>> blocks;
+    for (size_t i = 0; i < data8.size(); i += 8)
     {
-        if (i % 8 == 0)
-            cout << endl;
-        printBytes(round_key[i], Types::HEX);
-        cout << endl;
+        uint32_t part1 = 0, part2 = 0;
+        for (size_t j = 0; j < 4; ++j)
+        {
+            part1 |= (data8[i + j] << ((3 - j) * 8));
+            part2 |= (data8[i + j + 4] << ((3 - j) * 8));
+        }
+        blocks.push_back({part1, part2});
+    };
+    printBytes(blocks, Types::HEX);
+
+    RoundKey keys("key.key");
+
+    for (int i = 0; i < blocks.size(); i++)
+    {
+        vector<uint32_t> block = blocks[i];
+        for (int round = 0; round < 32; round++)
+        {   
+            uint32_t part1 = block[0];
+            uint32_t part2 = block[1];
+            uint32_t key = keys[round];
+
+            block[1] = part1;
+            block[0] = key + part1;
+        };
+
+        blocks[i] = block;
     }
 
+    cout << endl << endl;
+    printBytes(blocks, Types::HEX);
     system("pause");
     return 0;
 }

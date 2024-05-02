@@ -1,8 +1,7 @@
-#include <iostream>
 #include <vector>
 #include <numeric>
-#include <fstream>
 #include <bitset>
+
 
 using namespace std;
 
@@ -75,18 +74,3 @@ public:
         return bytes;
     }
 };
-
-void printVector8_t(vector<uint8_t> bytes)
-{
-    for (uint8_t byte : bytes)
-        cout << byte << ", ";
-    cout << endl;
-}
-
-void writeVector(string path, vector<uint8_t> bytes)
-{
-    ofstream file(path, ios::binary);
-    for (uint8_t byte : bytes)
-        file.put(byte);
-    file.close();
-}

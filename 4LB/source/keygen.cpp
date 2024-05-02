@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "common.cpp"
+#include "./common/io.cpp"
+#include "./common/generator.cpp"
 
 using namespace std;
 
@@ -18,9 +19,9 @@ int main()
     vector<uint8_t> key = generator.byteSequence(7);
 
     // Записываем биты ключа в файл
-    writeVector("./key.key", key);
+    writeBytes("./key.key", key);
     cout << "The key has been successfully generated and saved to the key.key file\nYour key: ";
-    printVector8_t(key);
+    printBytes(key, Types::HEX);
     
     system("pause");
     return 0;

@@ -68,7 +68,7 @@ void printBytes(vector<T> values, const Type &type = Types::DEC)
     {
         printBytes(value, type);
         count += 1;
-        if (count % 16 == 0)
+        if (count % 4 == 0)
             cout << endl;
     }
 }
