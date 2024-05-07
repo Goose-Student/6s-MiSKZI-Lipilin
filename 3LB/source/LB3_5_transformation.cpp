@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-
+#include "common/io.cpp" 
 using namespace std;
 
 vector<uint8_t> S = {0x01, 0x07, 0x0E, 0x0D, 0x00, 0x05, 0x08, 0x03,
@@ -39,6 +39,8 @@ int main()
                       istreambuf_iterator<char>());
 
     vector<uint8_t> encrypted = encrypt(a);
+
+    printBytes(encrypted, Types::HEX);
 
     for (uint8_t bytes : encrypted)
         output << bytes;

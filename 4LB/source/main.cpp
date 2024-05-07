@@ -43,11 +43,13 @@ public:
 };
 
 int main()
-{
+{   
+    // Чтение файла
     vector<uint8_t> data8 = readBytes("input.txt");
     while (data8.size() % 64 != 0)
         data8.push_back(0x00);
 
+    // развертывание байтоваго веектора в вектор vector<vector<part1, part1>> 
     vector<vector<uint32_t>> blocks;
     for (size_t i = 0; i < data8.size(); i += 8)
     {
@@ -59,28 +61,50 @@ int main()
         }
         blocks.push_back({part1, part2});
     };
-    printBytes(blocks, Types::HEX);
 
-    RoundKey keys("key.key");
-
+    // Зашифрование
+    RoundKey key("key.key");
     for (int i = 0; i < blocks.size(); i++)
-    {
+    {   
         vector<uint32_t> block = blocks[i];
         for (int round = 0; round < 32; round++)
-        {   
-            uint32_t part1 = block[0];
-            uint32_t part2 = block[1];
-            uint32_t key = keys[round];
+        {
+            uint32_t N1 = block[0];
+            uint32_t N2 = block[1];
+            uint32_t X = key[round];
 
-            block[1] = part1;
-            block[0] = key + part1;
+            // Сложение с ключем
+            uint32_t N1s = N1 + X;
+
+            // Подстановка
+            uint32_t R = 0;
+            for (int j = 0; j < 8; j++)
+            {
+                uint8_t bits4 = (N1s >> (j * 4)) & 0xF; // Извлекаем 4 бита
+                R |= (S[j][bits4] << (j * 4));          // Применяем подстановку и добавляем в R
+            }
+
+            // Перестановка
+            uint32_t Rs = (R << 11) | (R >> (32 - 11));
+
+            uint32_t N2s = Rs ^ N2; //XOR
+            block[1] = N1;
+            block[0] = N2s;
         };
-
         blocks[i] = block;
-    }
+    };
 
-    cout << endl << endl;
-    printBytes(blocks, Types::HEX);
+    vector<uint8_t> data8_reconstructed;
+    for (const auto &block : blocks)
+    {
+        for (const auto &part : block)
+        {
+            for (int i = 3; i >= 0; --i)
+                data8_reconstructed.push_back((part >> (i * 8)) & 0xFF);
+        };
+    }
+    writeBytes("input.bin", data8_reconstructed);
+
     system("pause");
     return 0;
-}
+};

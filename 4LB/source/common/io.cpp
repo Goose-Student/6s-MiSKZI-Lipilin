@@ -75,7 +75,7 @@ void printBytes(vector<T> values, const Type &type = Types::DEC)
 
 // Функции записи
 template <typename T>
-void writeBytes(string path, vector<T> values)
+void writeBytes(const string &path, vector<T> values)
 {
     ofstream file(path, ios::binary);
     for (T value : values)

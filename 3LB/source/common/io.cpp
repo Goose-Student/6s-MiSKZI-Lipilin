@@ -18,15 +18,15 @@ public:
     }
 
     // Геттер
-    string getType() const
+    operator string() const
     {
         return _type;
     }
 
     // Перегрузка оператора == для сравнения объектов
-    bool operator==(const Type &other) const
+    bool operator==(const Type &type) const
     {
-        return _type == other.getType();
+        return _type == string(type);
     }
 };
 
@@ -62,20 +62,20 @@ void printBytes(T value, const Type &type = Types::DEC)
 
 template <typename T>
 void printBytes(vector<T> values, const Type &type = Types::DEC)
-{   
+{
     int count = 0;
-    for (const T &value : values){
+    for (const T &value : values)
+    {
         printBytes(value, type);
         count += 1;
-        if (count % 16 == 0)
+        if (count % 4 == 0)
             cout << endl;
     }
-        
 }
 
 // Функции записи
 template <typename T>
-void writeBytes(string path, vector<T> values)
+void writeBytes(const string &path, vector<T> values)
 {
     ofstream file(path, ios::binary);
     for (T value : values)
@@ -83,4 +83,15 @@ void writeBytes(string path, vector<T> values)
         file.write(reinterpret_cast<const char *>(&value), sizeof(T));
     }
     file.close();
+}
+
+vector<uint8_t> readBytes(const string &path)
+{
+    ifstream file(path, ios::binary);
+    if (!file)
+        throw runtime_error(path);
+
+    vector<uint8_t> bytes((istreambuf_iterator<char>(file)),
+                          istreambuf_iterator<char>());
+    return bytes;
 }
