@@ -41,7 +41,7 @@ class RoundKey
 private:
     vector<uint8_t> bytes;
     mutable uint32_t counter = 0;
-    uint32_t sync = 4096; // Количество вызовов RoundKey[] на 1 Кб информации
+    uint32_t sync = 4096; // Количество вызовов RoundKey[] на 1 Кб данных
 
 public:
     RoundKey(const string &path)
