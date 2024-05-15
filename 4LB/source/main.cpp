@@ -16,7 +16,7 @@ vector<uint8_t> S[8] = {
     {1, 7, 14, 13, 0, 5, 8, 3, 4, 15, 10, 6, 9, 12, 11, 2}};
 
 template <typename T>
-T substitution(const T &value)
+T substitute(const T &value)
 {
     T replaced = 0;
     for (int i = 0; i < sizeof(value); i++)
@@ -28,7 +28,7 @@ T substitution(const T &value)
 }
 
 template <typename T>
-T circular_shift(const T &value, const int &shift)
+T cycle_shift(const T &value, const int &shift)
 {
     const size_t bits = sizeof(T) * 8;
     if (shift < 0)
@@ -71,15 +71,15 @@ public:
     }
 };
 
-uint64_t CryptoRound(const uint32_t &xkey, const uint64_t &block)
+uint64_t crypt(const uint32_t &xkey, const uint64_t &block)
 {
-    uint32_t N1 = block & 0xFFFFFFFF;     // Правые 32 бита блока
-    uint32_t N2 = block >> 32;            // Левые 32 бита блока
-    uint32_t N1s = N1 + xkey;             // Сложение с ключем
-    uint32_t R = substitution(N1s);       // Подстановка
-    uint32_t Rs = circular_shift(R, -11); // Перестановка
-    uint32_t N2s = Rs ^ N2;               // XOR
-    return (uint64_t(N1) << 32) | N2s;    // Объединяем N1 и N2s в одно 64-битное число
+    uint32_t N1 = block & 0xFFFFFFFF;  // Правые 32 бита блока
+    uint32_t N2 = block >> 32;         // Левые 32 бита блока
+    uint32_t N1s = N1 + xkey;          // Сложение с ключем
+    uint32_t R = substitute(N1s);      // Подстановка
+    uint32_t Rs = cycle_shift(R, -11); // Перестановка
+    uint32_t N2s = Rs ^ N2;            // XOR
+    return (uint64_t(N1) << 32) | N2s; // Объединяем N1 и N2s в одно 64-битное число
 }
 
 int main()
@@ -91,20 +91,19 @@ int main()
     RoundKey key("./files/key.key");
     for (int i = 0; i < data64.size(); i++)
     {
-        for (uint8_t round = 0; round < 31; round++)
-            data64[i] = CryptoRound(key[round], data64[i]);
-        data64[i] = circular_shift(CryptoRound(key[31], data64[i]), 32);
+        for (uint8_t j = 0; j < 31; j++)
+            data64[i] = crypt(key[j], data64[i]);
+        data64[i] = cycle_shift(crypt(key[31], data64[i]), 32);
     };
     writeBytes("./files/encrypt.enc", data64);
-    delete &key;
 
     // Расшифрование
     key = RoundKey("./files/key.key");
     for (int i = 0; i < data64.size(); i++)
     {
-        for (int round = 31; round > 0; round--)
-            data64[i] = CryptoRound(key[round], data64[i]);
-        data64[i] = circular_shift(CryptoRound(key[0], data64[i]), 32);
+        for (int j = 31; j > 0; j--)
+            data64[i] = crypt(key[j], data64[i]);
+        data64[i] = cycle_shift(crypt(key[0], data64[i]), 32);
     }
     writeBytes("./files/decrypt.txt", data64);
 
