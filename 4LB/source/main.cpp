@@ -84,28 +84,44 @@ uint64_t crypt(const uint32_t &xkey, const uint64_t &block)
 
 int main()
 {
-    // Чтение файла
-    vector<uint64_t> data64 = readBytes<uint64_t>("./files/open.txt");
+    string action, filename;
+    cout << "Enter 'encrypt' for encryption or 'decrypt' for decryption: ";
+    cin >> action;
+    cout << "Enter the file name: ";
+    cin >> filename;
 
+    // Чтение файла
+    vector<uint64_t> data64 = readBytes<uint64_t>("./files/" + filename);
+    
     // Зашифрование
-    RoundKey key("./files/key.key");
-    for (int i = 0; i < data64.size(); i++)
+    if (action == "encrypt")
     {
-        for (uint8_t j = 0; j < 31; j++)
-            data64[i] = crypt(key[j], data64[i]);
-        data64[i] = cycle_shift(crypt(key[31], data64[i]), 32);
-    };
-    writeBytes("./files/encrypt.enc", data64);
+        RoundKey key("./files/key.key");
+        for (int i = 0; i < data64.size(); i++)
+        {
+            for (uint8_t j = 0; j < 31; j++)
+                data64[i] = crypt(key[j], data64[i]);
+            data64[i] = cycle_shift(crypt(key[31], data64[i]), 32);
+        };
+        writeBytes("./files/encrypt.enc", data64);
+    }
 
     // Расшифрование
-    key = RoundKey("./files/key.key");
-    for (int i = 0; i < data64.size(); i++)
+    else if (action == "decrypt")
     {
-        for (int j = 31; j > 0; j--)
-            data64[i] = crypt(key[j], data64[i]);
-        data64[i] = cycle_shift(crypt(key[0], data64[i]), 32);
+        RoundKey key("./files/key.key");
+        for (int i = 0; i < data64.size(); i++)
+        {
+            for (int j = 31; j > 0; j--)
+                data64[i] = crypt(key[j], data64[i]);
+            data64[i] = cycle_shift(crypt(key[0], data64[i]), 32);
+        }
+        writeBytes("./files/decrypt.txt", data64);
     }
-    writeBytes("./files/decrypt.txt", data64);
+    else
+    {
+        cout << "invalid action.";
+    }
 
     system("pause");
     return 0;
