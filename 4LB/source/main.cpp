@@ -49,6 +49,7 @@ public:
         bytes = readBytes<uint8_t>(path);
         if (bytes.size() != 7)
             throw range_error("\nThe key must be 56 bits in size\n");
+        bytes.push_back(bytes[0]);
     };
 
     uint32_t operator[](int index) const
@@ -66,7 +67,7 @@ public:
             index = 31 - index;
         uint32_t nkey = 0;
         for (int i = 0; i < 4; i++)
-            nkey |= (bytes[(index * 4 + i) % 7] << (3 - i) * 8);
+            nkey |= (bytes[(index * 4 + i) % 8] << (3 - i) * 8);
         return nkey;
     }
 };
@@ -92,7 +93,7 @@ int main()
 
     // Чтение файла
     vector<uint64_t> data64 = readBytes<uint64_t>("./files/" + filename);
-    
+
     // Зашифрование
     if (action == "encrypt")
     {

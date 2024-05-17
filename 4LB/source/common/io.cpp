@@ -83,16 +83,21 @@ void printBytes(const vector<T> values, const Type &type = By::DEC)
 
 // Функции конвертации
 template <typename T>
-vector<T> convert(const vector<uint8_t> &bytes)
+vector<T> convert(vector<uint8_t> bytes)
 {
+    // Проверка и дополнение входного вектора
+    if (bytes.size() % sizeof(T) != 0)
+        bytes.push_back(0x80);
+    while (bytes.size() % sizeof(T) != 0)
+        bytes.push_back(0x00);
+
+    // Конвертация
     vector<T> result;
     for (size_t i = 0; i < bytes.size(); i += sizeof(T))
     {
         T value = 0;
-        for (size_t j = 0; j < sizeof(T) && i + j < bytes.size(); ++j)
-        {
+        for (size_t j = 0; j < sizeof(T); ++j)
             value |= static_cast<T>(bytes[i + j]) << (8 * (sizeof(T) - 1 - j));
-        }
         result.push_back(value);
     }
     return result;
