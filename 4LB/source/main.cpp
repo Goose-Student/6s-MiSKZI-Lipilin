@@ -28,12 +28,21 @@ T substitute(const T &value)
 }
 
 template <typename T>
-T cycle_shift(const T &value, const int &shift)
+T circular_shift(const T &value, const int &shift)
 {
     const size_t bits = sizeof(T) * 8;
     if (shift < 0)
-        return (value << -shift) | (value >> (bits + shift));
+        return (value << (-1 * shift)) | (value >> (bits + shift));
     return (value >> shift) | (value << (bits - shift));
+}
+
+template <typename T>
+vector<T> circular_shift(const vector<T> &values, const int &shift)
+{
+    vector<T> shifted;
+    for (T value : values)
+        shifted.push_back(circular_shift(value, shift));
+    return shifted;
 }
 
 class RoundKey
